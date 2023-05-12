@@ -1,6 +1,6 @@
 import { AppController } from '@/app.controller';
 import { AppService } from '@/app.service';
-import { CarsModule } from '@/features/car';
+import { CarsModule } from '@/features/cars';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -22,10 +22,10 @@ import { DataSource } from 'typeorm';
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
       }),
     }),
+    CarsModule,
     // ServeStaticModule.forRoot({
     //   rootPath: join(__dirname, 'public'),
     // }),
-    CarsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
