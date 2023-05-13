@@ -26,4 +26,18 @@ export class RentingHistoriesService {
 
     return hasRecentHistory ? 0 : 200;
   }
+
+  async findRentingHistories(email: string): Promise<RentingHistory[]> {
+    return await this.rentingHistoriesRepository.find({
+      relations: {
+        customerDetails: true,
+      },
+      where: {
+        userEmail: email,
+      },
+      order: {
+        rentDate: 'DESC',
+      },
+    });
+  }
 }
