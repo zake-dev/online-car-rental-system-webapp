@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { CustomerDetails } from '@/features/customer-details';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 
 @Entity('RENTING_HISTORY')
 export class RentingHistory {
@@ -22,4 +23,11 @@ export class RentingHistory {
 
   @Column({ name: 'BOND_AMOUNT', type: 'int' })
   bondAmount: number;
+
+  @ManyToOne(
+    () => CustomerDetails,
+    (customerDetails) => customerDetails.rentingHistories,
+  )
+  @JoinColumn({ name: 'CUSTOMER_DETAILS_ID', referencedColumnName: 'id' })
+  customerDetails: CustomerDetails;
 }
