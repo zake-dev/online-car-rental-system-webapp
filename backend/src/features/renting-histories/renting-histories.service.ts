@@ -1,6 +1,8 @@
+import { CustomerDetails } from '@/features/customer-details';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MoreThan, Repository } from 'typeorm';
+import { BookingDetailsDto } from './dto/booking-details.dto';
 import { RentingHistory } from './renting-history.entity';
 
 @Injectable()
@@ -8,6 +10,8 @@ export class RentingHistoriesService {
   constructor(
     @InjectRepository(RentingHistory)
     private rentingHistoriesRepository: Repository<RentingHistory>,
+    @InjectRepository(CustomerDetails)
+    private customerDetailsRepository: Repository<CustomerDetails>,
   ) {}
 
   async calculateBondAmount(email: string): Promise<number> {
@@ -47,5 +51,23 @@ export class RentingHistoriesService {
         id: id,
       },
     });
+  }
+
+  async recordRentingHistories(bookingDetailsDto: BookingDetailsDto) {
+    const { raw: customerDetailsResult } =
+      await this.customerDetailsRepository.insert(
+        bookingDetailsDto.customerDetails,
+      );
+
+    await Promise.allSettled(
+      bookingDetailsDto.rentingHistories.map((rentingHistory) =>
+        this.rentingHistoriesRepository.insert({
+          customerDetailsId: customerDetailsResult.insertId,
+          userEmail: bookingDetailsDto.customerDetails.userEmail,
+          bondAmount: bookingDetailsDto.bondAmount,
+          ...rentingHistory,
+        }),
+      ),
+    );
   }
 }

@@ -1,5 +1,6 @@
-import { RentingHistory } from '@/features/renting-histories/renting-history.entity';
+import { RentingHistory } from '@/features/renting-histories';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { CustomerDetailsDto } from './customer-details.dto';
 
 @Entity('CUSTOMER_DETAILS')
 export class CustomerDetails {
@@ -35,4 +36,18 @@ export class CustomerDetails {
     (rentingHistory) => rentingHistory.customerDetails,
   )
   rentingHistories: RentingHistory[];
+
+  static from(customerDetailsDto: CustomerDetailsDto) {
+    const customerDetails = new CustomerDetails();
+    customerDetails.firstName = customerDetailsDto.firstName;
+    customerDetails.lastName = customerDetailsDto.lastName;
+    customerDetails.addressLine1 = customerDetailsDto.addressLine1;
+    customerDetails.addressLine2 = customerDetailsDto.addressLine2;
+    customerDetails.suburb = customerDetailsDto.suburb;
+    customerDetails.postcode = customerDetailsDto.postcode;
+    customerDetails.state = customerDetailsDto.state;
+    customerDetails.paymentType = customerDetailsDto.paymentType;
+
+    return customerDetails;
+  }
 }
