@@ -1,3 +1,4 @@
+import { CarsModule } from '@/features/cars';
 import { CustomerDetails } from '@/features/customer-details';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -6,7 +7,10 @@ import { RentingHistoriesService } from './renting-histories.service';
 import { RentingHistory } from './renting-history.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([RentingHistory, CustomerDetails])],
+  imports: [
+    TypeOrmModule.forFeature([RentingHistory, CustomerDetails]),
+    CarsModule,
+  ],
   providers: [RentingHistoriesService],
   controllers: [RentingHistoriesController],
 })

@@ -30,4 +30,10 @@ export class RentingHistory {
   )
   @JoinColumn({ name: 'CUSTOMER_DETAILS_ID', referencedColumnName: 'id' })
   customerDetails: CustomerDetails;
+
+  static from() {
+    const rentingHistory = new RentingHistory();
+
+    return rentingHistory;
+  }
 }

@@ -1,13 +1,40 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { CarsService } from '@/features/cars';
+import { BookingDetailsDto } from '@/features/renting-histories/dto/booking-details.dto';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Param,
+  Post,
+  Query,
+  Res,
+} from '@nestjs/common';
+import { Response } from 'express';
 import { RentingHistoriesService } from './renting-histories.service';
 
-@Controller('renting-history')
+@Controller('renting-histories')
 export class RentingHistoriesController {
-  constructor(private rentingHistoriesService: RentingHistoriesService) {}
+  constructor(
+    private rentingHistoriesService: RentingHistoriesService,
+    private carsService: CarsService,
+  ) {}
 
   @Get('/')
   findRentingHistories(@Query('email') email: string) {
     return this.rentingHistoriesService.findRentingHistories(email);
+  }
+
+  @Post('/')
+  async recordRentingHistories(
+    @Body() bookingDetailsDto: BookingDetailsDto,
+    @Res() res: Response,
+  ) {
+    await Promise.allSettled([
+      this.rentingHistoriesService.recordRentingHistories(bookingDetailsDto),
+      this.carsService.updateCarsStatus(bookingDetailsDto.rentingHistories),
+    ]);
+    res.status(HttpStatus.CREATED).send();
   }
 
   @Get('/:id')
