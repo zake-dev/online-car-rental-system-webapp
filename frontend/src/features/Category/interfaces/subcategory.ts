@@ -1,5 +1,0 @@
-export interface Subcategory {
-  id: number;
-  name: string;
-  productCount: number;
-}
