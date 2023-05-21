@@ -18,8 +18,7 @@ export default function SearchBar() {
   const onSearch = () => {
     searchParams.set('name', query);
     searchParams.set('page', '1');
-    searchParams.delete('categoryId');
-    searchParams.delete('subcategoryId');
+    searchParams.delete('category');
     navigate({ pathname: '/browse', search: `?${searchParams.toString()}` });
   };
 
@@ -28,10 +27,10 @@ export default function SearchBar() {
   }, [searchParams]);
 
   return (
-    <div className="flex-1 relative flex flex-row rounded-[32px] overflow-hidden border border-black-400">
+    <div className="w-[500px] relative flex flex-row rounded-[32px] overflow-hidden border border-black-400">
       <input
         className="flex-1 rounded-[32px] h-14 px-8 py-2 outline-none bg-black-100 text-body-1"
-        placeholder="Search products"
+        placeholder="Search cars"
         value={query}
         onInput={onInput}
         onKeyDown={onKeyDown}

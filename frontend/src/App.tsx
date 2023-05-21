@@ -3,6 +3,8 @@ import * as React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter } from 'react-router-dom';
 
+import { AppBar } from '@/components';
+
 const queryClient = new QueryClient();
 
 function App() {
@@ -10,7 +12,7 @@ function App() {
     <React.StrictMode>
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
-          {/* <AppBar /> */}
+          <AppBar />
           {/* <SideBar /> */}
           <div className="main">{/* <Router /> */}</div>
           {/* <ShoppingCart /> */}
