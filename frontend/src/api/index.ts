@@ -1,1 +1,3 @@
-export const api = {};
+import * as cars from './cars';
+
+export const api = { cars };
