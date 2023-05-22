@@ -12,7 +12,6 @@ type ShoppingCartStore = {
   increaseItem: (target: Car) => void;
   decreaseItem: (target: Car) => void;
   clearItems: () => void;
-  placeOrder: () => void;
 };
 
 export const useShoppingCartStore = create<ShoppingCartStore>()(
@@ -67,11 +66,6 @@ export const useShoppingCartStore = create<ShoppingCartStore>()(
         });
       },
       clearItems: () => set({ items: [], totalPrice: 0 }),
-      placeOrder: () =>
-        set({
-          items: [],
-          totalPrice: 0,
-        }),
     }),
     { name: 'shopping-cart-store' },
   ),
