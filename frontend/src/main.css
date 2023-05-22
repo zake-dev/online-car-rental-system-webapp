@@ -140,7 +140,7 @@ body,
 
   /* Layout */
   .page-container {
-    @apply w-full h-full p-16 ps-6 flex flex-col;
+    @apply w-full h-full p-6 pe-16 flex flex-col;
     grid-area: main;
   }
 

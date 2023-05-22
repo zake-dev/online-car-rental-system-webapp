@@ -1,56 +1,42 @@
 import { ReactComponent as SearchFailed } from '@assets/icons/search-failed.svg';
-import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
 
-import { api } from '@/api';
 import { PaginationBar } from '@/components';
-import { ProductListItem } from '@/features/Product';
+import { CarListItem, useFilteredCars } from '@/features/Car';
 
 export default function BrowsePage() {
   const [searchParams] = useSearchParams();
-  const { data: paginatedProducts } = useQuery({
-    queryKey: ['products', searchParams.toString()],
-    queryFn: () => api.products.getProducts(searchParams),
-  });
+  const { paginatedCars } = useFilteredCars(searchParams);
 
   const productLowCount = (() => {
-    const page = paginatedProducts?.pagination.page || 1;
-    const size = paginatedProducts?.pagination.size || 0;
+    const page = paginatedCars?.pagination.page || 1;
+    const size = paginatedCars?.pagination.size || 0;
     return (page - 1) * size + 1;
   })();
   const productHighCount = (() => {
-    const page = paginatedProducts?.pagination.page || 1;
-    const size = paginatedProducts?.pagination.size || 0;
+    const page = paginatedCars?.pagination.page || 1;
+    const size = paginatedCars?.pagination.size || 0;
     return page * size;
   })();
 
   const nameQuery = searchParams.get('name');
-  const priceLowQuery = searchParams.get('priceLow');
-  const priceHighQuery = searchParams.get('priceHigh');
-
-  const hasSearchQueries = nameQuery || priceLowQuery || priceHighQuery;
 
   return (
     <div className="page-container gap-[16px] items-stretch">
-      {hasSearchQueries ? (
+      {nameQuery ? (
         <>
-          <span className="text-display-3 ">
-            Results for {nameQuery ? `"${nameQuery}"` : null}
-          </span>
-          <span className="text-headline">
-            Price range: ${priceLowQuery ?? 0} ~ ${priceHighQuery ?? 50}
-          </span>
+          <span className="text-display-3 ">Results for {nameQuery}</span>
         </>
       ) : null}
       <span className="text-body-2 text-black-500">
         {productLowCount} - {productHighCount} results of{' '}
-        {paginatedProducts?.pagination.totalCount ?? 0}
+        {paginatedCars?.pagination.totalCount ?? 0}
       </span>
 
-      {paginatedProducts?.content.length ? (
+      {paginatedCars?.content.length ? (
         <div className="flex flex-row flex-wrap gap-[16px]">
-          {paginatedProducts?.content.map((product) => (
-            <ProductListItem key={product.id} product={product} />
+          {paginatedCars?.content.map((car) => (
+            <CarListItem key={car.id} car={car} />
           ))}
         </div>
       ) : (
@@ -63,7 +49,7 @@ export default function BrowsePage() {
       )}
 
       <div className="flex justify-center items-center">
-        <PaginationBar pagination={paginatedProducts?.pagination} />
+        <PaginationBar pagination={paginatedCars?.pagination} />
       </div>
     </div>
   );
