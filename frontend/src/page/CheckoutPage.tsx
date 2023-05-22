@@ -198,7 +198,7 @@ export default function CheckoutPage() {
           </div>
         </form>
 
-        <div className="flex flex-col items-stretch py-2 border-t-2 border-b-2 border-dashed border-black-300">
+        <div className="w-[640px] flex flex-col items-stretch py-2 border-t-2 border-b-2 border-dashed border-black-300">
           <div className="flex flex-row justify-between items-center text-black-500">
             <span className="text-subhead-long-2">Bond Amount</span>
             <span className="text-body-long-2">
