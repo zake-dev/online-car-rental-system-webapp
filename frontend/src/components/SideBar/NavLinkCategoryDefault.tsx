@@ -6,33 +6,30 @@ import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { Category } from '@/features/Category';
 
 type Props = {
-  category: Category;
+  categories: Category[];
 };
 
-export default function NavLinkCategoryDefault({ category }: Props) {
+export default function NavLinkCategoryDefault({ categories }: Props) {
   const location = useLocation();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
   const totalCount = React.useMemo(
     () =>
-      category.subcategories
-        .map((subcategory) => subcategory.productCount)
-        .reduce((a, b) => a + b),
-    [category.subcategories],
+      categories
+        .map((category) => category.itemsCount)
+        .reduce((a, b) => a + b, 0),
+    [categories],
   );
 
   const isActive = React.useMemo(
     () =>
-      location.pathname.startsWith('/browse') &&
-      searchParams.get('categoryId') === category.id.toString() &&
-      !searchParams.has('subcategoryId'),
+      location.pathname.startsWith('/browse') && !searchParams.has('category'),
     [location.pathname, searchParams],
   );
 
   const onNavigate = () => {
-    searchParams.set('categoryId', category.id.toString());
-    searchParams.delete('subcategoryId');
+    searchParams.delete('category');
     searchParams.set('page', '1');
     navigate({ pathname: '/browse', search: `?${searchParams.toString()}` });
   };
@@ -48,7 +45,7 @@ export default function NavLinkCategoryDefault({ category }: Props) {
       )}
       onClick={onNavigate}
     >
-      <span className="flex-1 text-left">All {category.name}</span>
+      <span className="flex-1 text-left">All Cars</span>
       <span
         className={classNames(
           'text-subhead-1 px-3 rounded-[20px] transition-colors duration-200',
