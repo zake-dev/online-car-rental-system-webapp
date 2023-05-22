@@ -7,7 +7,7 @@ type Props = {
 };
 
 export default function ShoppingCartFloatingButton({ onOpen }: Props) {
-  const totalQuantity = useShoppingCartStore((state) => state.totalQuantity);
+  const cartItems = useShoppingCartStore((state) => state.items);
 
   return (
     <button
@@ -16,7 +16,7 @@ export default function ShoppingCartFloatingButton({ onOpen }: Props) {
     >
       <Cart className="w-10 h-10" />
       <span className="absolute top-0 right-0 px-2 rounded-[20px] text-subhead-1 text-white bg-point-red">
-        {totalQuantity}
+        {cartItems.length}
       </span>
     </button>
   );
