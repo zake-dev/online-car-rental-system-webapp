@@ -1,19 +1,18 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-import { Product } from '@/features/Product';
+import { Car } from '@/features/Car';
+
+type CartItem = Car & { rentalDays: number };
 
 type ShoppingCartStore = {
-  items: (Product & { quantity: number })[];
-  totalQuantity: number;
+  items: CartItem[];
   totalPrice: number;
-  shouldPlaceOrder: boolean;
-  addItem: (target: Product) => void;
-  removeItem: (target: Product) => void;
-  increaseItem: (target: Product) => void;
-  decreaseItem: (target: Product) => void;
+  addItem: (target: Car) => void;
+  removeItem: (target: Car) => void;
+  increaseItem: (target: Car) => void;
+  decreaseItem: (target: Car) => void;
   clearItems: () => void;
-  checkout: () => void;
   placeOrder: () => void;
 };
 
@@ -21,56 +20,47 @@ export const useShoppingCartStore = create<ShoppingCartStore>()(
   persist(
     (set, get) => ({
       items: [],
-      totalQuantity: 0,
       totalPrice: 0,
-      shouldPlaceOrder: false,
-      addItem: (target: Product) => {
+      addItem: (target: Car) => {
         const { items } = get();
 
         let item = items.find((item) => item.id === target.id);
         if (!item) {
-          item = { ...target, quantity: 0 };
+          item = { ...target, rentalDays: 0 };
           items.push(item);
         }
-        item.quantity = Math.min(item.quantity + 1, 20, item.inStock);
 
         set({
           items: [...items],
-          totalQuantity: getTotalQuantity(items),
           totalPrice: getTotalPrice(items),
         });
       },
-      removeItem: (target: Product) => {
+      removeItem: (target: Car) => {
         const { items } = get();
         const newItems = items.filter((item) => item.id !== target.id);
 
         set({
           items: newItems,
-          totalQuantity: getTotalQuantity(newItems),
           totalPrice: getTotalPrice(newItems),
         });
       },
-      increaseItem: (target: Product) => get().addItem(target),
-      decreaseItem: (target: Product) => {
-        const { items, totalQuantity, totalPrice, removeItem } = get();
+      increaseItem: (target: Car) => get().addItem(target),
+      decreaseItem: (target: Car) => {
+        const { items, totalPrice, removeItem } = get();
         const item = items.find((item) => item.id === target.id);
         if (!item) return;
-        if (item.quantity === 1) return removeItem(target);
-        item.quantity--;
+        if (item.rentalDays === 1) return removeItem(target);
+        item.rentalDays--;
 
         set({
           items,
-          totalQuantity: totalQuantity - 1,
-          totalPrice: totalPrice - target.price,
+          totalPrice: totalPrice - target.pricePerDay,
         });
       },
-      clearItems: () => set({ items: [], totalQuantity: 0, totalPrice: 0 }),
-      checkout: () => set({ shouldPlaceOrder: true }),
+      clearItems: () => set({ items: [], totalPrice: 0 }),
       placeOrder: () =>
         set({
-          shouldPlaceOrder: false,
           items: [],
-          totalQuantity: 0,
           totalPrice: 0,
         }),
     }),
@@ -78,10 +68,8 @@ export const useShoppingCartStore = create<ShoppingCartStore>()(
   ),
 );
 
-function getTotalQuantity(items: (Product & { quantity: number })[]): number {
-  return items.map((item) => item.quantity).reduce((a, b) => a + b);
-}
-
-function getTotalPrice(items: (Product & { quantity: number })[]): number {
-  return items.map((item) => item.price).reduce((a, b) => a + b);
+function getTotalPrice(items: CartItem[]): number {
+  return items
+    .map((item) => item.pricePerDay * item.rentalDays)
+    .reduce((a, b) => a + b);
 }

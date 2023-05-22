@@ -3,7 +3,8 @@ import * as React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter } from 'react-router-dom';
 
-import { AppBar } from '@/components';
+import { AppBar, SideBar } from '@/components';
+import Router from '@/router';
 
 const queryClient = new QueryClient();
 
@@ -13,8 +14,8 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <AppBar />
-          {/* <SideBar /> */}
-          <div className="main">{/* <Router /> */}</div>
+          <SideBar />
+          <div className="main">{<Router />}</div>
           {/* <ShoppingCart /> */}
         </BrowserRouter>
       </QueryClientProvider>

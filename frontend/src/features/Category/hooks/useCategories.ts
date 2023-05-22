@@ -7,7 +7,7 @@ import { Car } from '@/features/Car';
 
 import { Category } from '../interfaces';
 
-export function useCategories({ name }: { name?: string }) {
+export function useCategories({ name }: { name: string | null }) {
   const { data: cars, ...useQueryResult } = useQuery(
     ['cars'],
     api.cars.getCars,
@@ -20,7 +20,7 @@ export function useCategories({ name }: { name?: string }) {
   return { categories, ...useQueryResult };
 }
 
-function toFilteredCategories(cars: Car[], name?: string) {
+function toFilteredCategories(cars: Car[], name: string | null) {
   const categories = cars.reduce<{ [key: string]: Car[] }>((res, car) => {
     if (!res.hasOwnProperty(car.category)) res[car.category] = [];
     if (
