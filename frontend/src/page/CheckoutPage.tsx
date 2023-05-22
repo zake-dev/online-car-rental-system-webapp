@@ -1,12 +1,13 @@
+import { ReactComponent as Close } from '@assets/icons/close.svg';
 import { ReactComponent as DocSuccess } from '@assets/icons/doc-success.svg';
 import { ReactComponent as RightArrow } from '@assets/icons/right-arrow.svg';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
 import { api } from '@/api';
 import { Modal, SpinningLoader, TextInput } from '@/components';
-import { DeliveryDetails } from '@/features/Order';
+import { CustomerDetails } from '@/features/RentingHistory';
 import { useModal } from '@/hooks';
 import { useShoppingCartStore } from '@/stores';
 import { Validator } from '@/utils';
@@ -14,34 +15,38 @@ import { Validator } from '@/utils';
 export default function CheckoutPage() {
   const {
     register,
+    getValues,
     handleSubmit,
     formState: { errors, isDirty, isValid },
   } = useForm({ mode: 'all' });
-  const { mutate: placeOrderAsync, isLoading } = useMutation({
-    mutationFn: api.orders.placeOrder,
+  const userEmail = getValues('userEmail');
+  const { mutate: placeBooking, isLoading } = useMutation({
+    mutationFn: api.rentingHistories.placeBooking,
   });
+  const { data: bondAmount } = useQuery(
+    ['bondAmount', userEmail],
+    () => api.rentingHistories.calculateBondAmount(userEmail),
+    { enabled: !!userEmail },
+  );
 
   const { isOpen, openModal, closeModal } = useModal();
   const navigate = useNavigate();
 
   const items = useShoppingCartStore((state) => state.items);
-  const totalQuantity = useShoppingCartStore((state) => state.totalQuantity);
   const totalPrice = useShoppingCartStore((state) => state.totalPrice);
-
-  const placeOrder = useShoppingCartStore((state) => state.placeOrder);
+  const clearItems = useShoppingCartStore((state) => state.clearItems);
 
   const onSubmit: SubmitHandler<FieldValues> = (data) =>
-    placeOrderAsync(
+    placeBooking(
       {
-        products: items,
-        deliveryDetails: data as DeliveryDetails,
-        totalQuantity,
-        totalPrice,
+        cartItems: items,
+        customerDetails: data as CustomerDetails,
+        bondAmount: bondAmount ?? 200,
       },
       {
         onSuccess: () => {
           openModal();
-          placeOrder();
+          clearItems();
         },
       },
     );
@@ -51,13 +56,13 @@ export default function CheckoutPage() {
   return (
     <>
       <div className="page-container gap-4">
-        <h1 className="text-display-3">Order Details</h1>
+        <h1 className="text-display-3">Booking Details</h1>
         <span className="text-body-1 text-black-500">
-          Please fill out the form below to place your order.
+          Please fill out the form below to place your booking.
         </span>
 
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="w-[640px] flex flex-col items-stretch gap-2 py-4">
+          <div className="w-[640px] flex flex-col items-stretch gap-1 py-4">
             <h2 className="text-subhead-2">Contact Details</h2>
             <div className="flex flex-row gap-4">
               <TextInput
@@ -93,16 +98,15 @@ export default function CheckoutPage() {
                 placeholder="example@moolmorths.com"
                 invalidMessage="Please enter a valid email"
                 required
-                {...register('email', {
+                {...register('userEmail', {
                   required: true,
                   maxLength: 255,
                   validate: Validator.isEmail,
                 })}
-                invalid={!!errors.email}
-                aria-invalid={errors.email ? 'true' : 'false'}
+                invalid={!!errors.userEmail}
+                aria-invalid={errors.userEmail ? 'true' : 'false'}
               />
             </div>
-            <h2 className="text-subhead-2">Delivery Details</h2>
             <div className="flex flex-row gap-4">
               <TextInput
                 label="Address Line 1"
@@ -176,14 +180,53 @@ export default function CheckoutPage() {
                 aria-invalid={errors.postcode ? 'true' : 'false'}
               />
             </div>
+            <div className="flex flex-row gap-4">
+              <TextInput
+                label="Payment Type"
+                placeholder="Visa / Master Card"
+                invalidMessage="Please enter your payment type"
+                required
+                {...register('paymentType', {
+                  required: true,
+                  maxLength: 10,
+                  validate: Validator.isFilled,
+                })}
+                invalid={!!errors.paymentType}
+                aria-invalid={errors.paymentType ? 'true' : 'false'}
+              />
+            </div>
           </div>
+        </form>
 
+        <div className="flex flex-col items-stretch py-2 border-t-2 border-b-2 border-dashed border-black-300">
+          <div className="flex flex-row justify-between items-center text-black-500">
+            <span className="text-subhead-long-2">Bond Amount</span>
+            <span className="text-body-long-2">
+              $ {(bondAmount ?? 200).toFixed(2)}
+            </span>
+          </div>
+          <div className="flex flex-row justify-between items-center">
+            <span className="text-subhead-long-1">Total Price</span>
+            <span className="text-body-long-1">
+              $ {(totalPrice + (bondAmount ?? 200)).toFixed(2)}
+            </span>
+          </div>
+        </div>
+
+        <div className="w-[640px] flex flex-row justify-between">
           <button
-            type="submit"
+            className="w-[300px] btn btn-large btn-secondary"
+            onClick={() => history.back()}
+          >
+            <Close className="text-black" fill="currentColor" />
+            <span>Continue Selection</span>
+          </button>
+          <button
             className="w-[300px] btn btn-large btn-primary"
             disabled={!isDirty || !isValid || isLoading}
+            onClick={handleSubmit(onSubmit)}
           >
-            <span>Place Order</span>
+            <span>Booking</span>
             {isLoading ? (
               <SpinningLoader size={24} color="#6B7280" />
             ) : (
@@ -193,14 +236,13 @@ export default function CheckoutPage() {
               />
             )}
           </button>
-        </form>
+        </div>
       </div>
 
       <Modal.Alert
         isOpen={isOpen}
         icon={DocSuccess}
-        title="Your order has been placed!"
-        message="Check your email for details."
+        title="Your reservation has been confirmed!"
         onRequestClose={closeModal}
         onAfterClose={onNavigateToHome}
       />

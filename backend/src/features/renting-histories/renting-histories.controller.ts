@@ -37,13 +37,13 @@ export class RentingHistoriesController {
     res.status(HttpStatus.CREATED).send();
   }
 
-  @Get('/:id')
-  findRentingHistory(@Param('id') id: number) {
-    return this.rentingHistoriesService.findRentingHistory(id);
-  }
-
   @Get('/bond-amount')
   calculateBondAmount(@Query('email') email: string) {
     return this.rentingHistoriesService.calculateBondAmount(email);
+  }
+
+  @Get('/:id')
+  findRentingHistory(@Param('id') id: number) {
+    return this.rentingHistoriesService.findRentingHistory(id);
   }
 }
