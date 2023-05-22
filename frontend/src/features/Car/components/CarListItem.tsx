@@ -4,7 +4,8 @@ import { ReactComponent as Seat } from '@assets/icons/seat.svg';
 import classNames from 'classnames';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
-import { SizedBox } from '@/components';
+import { Modal, SizedBox } from '@/components';
+import { useModal } from '@/hooks';
 import { useShoppingCartStore } from '@/stores';
 
 import { Car } from '../interfaces';
@@ -17,6 +18,7 @@ type Props = {
 export default function CarListItem({ car }: Props) {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { isOpen, openModal, closeModal } = useModal();
 
   const canRent = car.availability;
 
@@ -28,7 +30,7 @@ export default function CarListItem({ car }: Props) {
 
   const addItem = useShoppingCartStore((state) => state.addItem);
   const onAddItem = () => {
-    if (!canRent) return;
+    if (!canRent) return openModal();
     addItem(car);
   };
 
@@ -108,6 +110,13 @@ export default function CarListItem({ car }: Props) {
       >
         Add to Cart
       </button>
+
+      <Modal.Alert
+        isOpen={isOpen}
+        onRequestClose={closeModal}
+        title="Sorry, the car is not available now."
+        message="Please try other cars."
+      />
     </div>
   );
 }
