@@ -45,10 +45,10 @@ export default function ShoppingCartItem({ item }: Props) {
         </div>
         <div className="flex flex-row items-center">
           <p className="flex-1 flex flex-row gap-1">
-            <span className="text-subhead-3">
-              {item.pricePerDay.toFixed(2)}
+            <span className="text-subhead-2">
+              {item.pricePerDay.toFixed(2)} AUD
             </span>
-            <span className="text-caption">AUD per day</span>
+            <span className="text-caption">per day</span>
           </p>
           <div className="flex flex-row items-center gap-3 p-1">
             <button

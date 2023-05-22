@@ -27,7 +27,7 @@ export default function ShoppingCartModal({ onClose }: Props) {
   };
 
   return (
-    <div className="relative w-[392px] flex flex-col items-stretch rounded-[8px] bg-white border border-black-200 shadow-[0_4px_12px_rgba(0,0,0,0.12)] overflow-hidden">
+    <div className="relative w-[412px] flex flex-col items-stretch rounded-[8px] bg-white border border-black-200 shadow-[0_4px_12px_rgba(0,0,0,0.12)] overflow-hidden">
       <div className="flex flex-row gap-1 items-center px-4 py-2 bg-blue-primary">
         <Cart className="w-6 h-6" />
         <span className="text-headline text-white">Shopping Cart</span>

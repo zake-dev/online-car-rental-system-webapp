@@ -96,9 +96,9 @@ export default function CarListItem({ car }: Props) {
         })}
       >
         <span className="text-display-5 text-black">
-          {car.pricePerDay.toFixed(2)}
+          {car.pricePerDay.toFixed(2)} AUD
         </span>
-        <span className="text-body-1 text-black">AUD per day</span>
+        <span className="text-body-1 text-black">per day</span>
       </p>
       <SizedBox height={16} />
       <button

@@ -8,12 +8,12 @@ export default function BrowsePage() {
   const [searchParams] = useSearchParams();
   const { paginatedCars } = useFilteredCars(searchParams);
 
-  const productLowCount = (() => {
+  const carLowCount = (() => {
     const page = paginatedCars?.pagination.page || 1;
     const size = paginatedCars?.pagination.size || 0;
     return (page - 1) * size + 1;
   })();
-  const productHighCount = (() => {
+  const carHighCount = (() => {
     const page = paginatedCars?.pagination.page || 1;
     const size = paginatedCars?.pagination.size || 0;
     return page * size;
@@ -29,7 +29,7 @@ export default function BrowsePage() {
         </>
       ) : null}
       <span className="text-body-2 text-black-500">
-        {productLowCount} - {productHighCount} results of{' '}
+        {carLowCount} - {carHighCount} results of{' '}
         {paginatedCars?.pagination.totalCount ?? 0}
       </span>
 
@@ -42,9 +42,7 @@ export default function BrowsePage() {
       ) : (
         <div className="flex flex-col w-full h-full justify-center items-center">
           <SearchFailed />
-          <span className="text-display-4 text-black-200">
-            No products to show
-          </span>
+          <span className="text-display-4 text-black-200">No cars to show</span>
         </div>
       )}
 
