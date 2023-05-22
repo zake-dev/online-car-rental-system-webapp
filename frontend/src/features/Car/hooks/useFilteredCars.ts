@@ -7,17 +7,12 @@ import { Paginated } from '@/interfaces';
 
 import { Car } from '../interfaces';
 
-export function useFilteredCars({
-  category,
-  name,
-  page = '1',
-  size = '6',
-}: {
-  category?: string;
-  name?: string;
-  page?: string;
-  size?: string;
-}) {
+export function useFilteredCars(searchParams: URLSearchParams) {
+  const category = searchParams.get('category');
+  const name = searchParams.get('name');
+  const page = searchParams.get('page') ?? '1';
+  const size = searchParams.get('size') ?? '10';
+
   const { data: cars, ...useQueryResult } = useQuery(
     ['cars'],
     api.cars.getCars,

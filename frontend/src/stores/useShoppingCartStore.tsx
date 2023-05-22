@@ -2,8 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 import { Car } from '@/features/Car';
-
-type CartItem = Car & { rentalDays: number };
+import { CartItem } from '@/features/ShoppingCart';
 
 type ShoppingCartStore = {
   items: CartItem[];
@@ -26,7 +25,7 @@ export const useShoppingCartStore = create<ShoppingCartStore>()(
 
         let item = items.find((item) => item.id === target.id);
         if (!item) {
-          item = { ...target, rentalDays: 0 };
+          item = { ...target, rentalDays: 1 };
           items.push(item);
         }
 
@@ -44,12 +43,22 @@ export const useShoppingCartStore = create<ShoppingCartStore>()(
           totalPrice: getTotalPrice(newItems),
         });
       },
-      increaseItem: (target: Car) => get().addItem(target),
+      increaseItem: (target: Car) => {
+        const { items } = get();
+
+        let item = items.find((item) => item.id === target.id);
+        if (item) item.rentalDays++;
+
+        set({
+          items: [...items],
+          totalPrice: getTotalPrice(items),
+        });
+      },
       decreaseItem: (target: Car) => {
         const { items, totalPrice, removeItem } = get();
         const item = items.find((item) => item.id === target.id);
         if (!item) return;
-        if (item.rentalDays === 1) return removeItem(target);
+        if (item.rentalDays <= 1) return removeItem(target);
         item.rentalDays--;
 
         set({
@@ -71,5 +80,5 @@ export const useShoppingCartStore = create<ShoppingCartStore>()(
 function getTotalPrice(items: CartItem[]): number {
   return items
     .map((item) => item.pricePerDay * item.rentalDays)
-    .reduce((a, b) => a + b);
+    .reduce((a, b) => a + b, 0);
 }

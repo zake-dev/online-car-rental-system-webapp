@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { ReactComponent as WarningAccount } from '@assets/icons/warning-account.svg';
+import { ReactComponent as Warning } from '@assets/icons/warning.svg';
 import ReactModal from 'react-modal';
 
 type Props = ReactModal.Props & {
@@ -10,7 +10,7 @@ type Props = ReactModal.Props & {
 };
 
 export default function Alert({
-  icon = WarningAccount,
+  icon = Warning,
   title,
   message,
   onRequestClose,
@@ -29,9 +29,9 @@ export default function Alert({
     >
       <ModalIcon />
       <div className="w-full flex flex-col items-center gap-[8px]">
-        <span className="text-subhead-1 text-black">{title}</span>
+        <span className="text-subhead-1 text-black text-center">{title}</span>
         {message ? (
-          <span className="text-body-2 text-black">{message}</span>
+          <span className="text-body-2 text-black text-center">{message}</span>
         ) : null}
       </div>
       <button className="btn btn-medium btn-primary" onClick={onRequestClose}>
